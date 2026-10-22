@@ -18,18 +18,13 @@ const to = list.find((entry) => entry?.from === from)?.to;
 // enable "preserve log" in browser dev tools to still see this after redirect
 console.info({ from, to });
 
-// immediately navigate to destination
-if (to)
-  window.location.href = to;
-
-// if no matching destination
-else {
-  // show html error message
-  const message = `
-    No redirect link found for "${from}".<br>
-  `;
-  window.onload = () => { document.body.innerHTML = message };
-
-  // OR, immediately navigate to some fallback url
-  // window.location.href = "some-fallback-url.com/";
+function setStatus(html) {
+  const el = document.getElementById("status") || document.body;
+  if (el) el.innerHTML = html;
+}
+if (to) {
+  setStatus(`Redirecting you to <a href="${to}">${to}</a>…`);
+  setTimeout(() => { window.location.replace(to); }, 50);
+} else {
+  setStatus(`No redirect found for /${from}.`);
 }
